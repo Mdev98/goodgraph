@@ -816,7 +816,7 @@ header .item {
 /* MOBILE */
 
 @media (max-width: 768px) {
-    body {
+    /* body {
         padding: 0px 20px;
         background-color: var(--green);
     }
@@ -847,5 +847,47 @@ header .item {
     .alert-title {
         font-size: 2rem;
         text-align: center;
+    } */
+
+    header {
+        padding: 20px 20px;
+    }
+
+    nav {
+        display: none;
+    }
+
+    .logo img {
+        max-width: 70%;
+    }
+
+    .hero {
+        flex-direction: column;
+        height: auto;
+        padding-top: 0px;
+    }
+
+    .hero-banner img {
+        position: relative;
+        right: -75px;
+        bottom: -30px;
+        max-width: 80%;
+        transform: scaleX(-1);
+    }
+
+    .hero-action {
+        padding: 15px 20px;
+        font-size: .8rem;
+    }
+
+    .hero-title {
+        font-size: clamp(1.7rem, 3.5vw, 4rem);
+    }
+    
+    .hero-title svg {
+        max-width: 30px;
+        position: absolute;
+        top: -60px;
+        right: 10px;
     }
 }

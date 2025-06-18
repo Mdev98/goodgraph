@@ -593,6 +593,7 @@ header nav {
 
 .finally-btn {
     display: block;
+    width: fit-content;
     padding: 20px 50px;
     margin: 40px auto 50px;
     font-size: 1.5rem;

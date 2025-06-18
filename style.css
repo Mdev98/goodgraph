@@ -53,7 +53,7 @@
 }
 
 .card {
-    width: clamp(280px, 90vw, 350px);
+    width: clamp(280px, 90vw, 370px);
     background-color: #fff;
     border-radius: 16px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
@@ -211,6 +211,15 @@ header nav {
     flex-wrap: wrap;
 }
 
+#about-me .title {
+    position: relative;
+}
+#about-me .title svg {
+    position: absolute;
+    right: -50px;
+    top: -80px;
+}
+
 #about-me .text {
     margin: 2vw 0;
 }
@@ -284,7 +293,14 @@ header nav {
 
 #steps .title {
     text-align: center;
-    margin: 5vw 0;
+    margin: 5vw auto;
+    width: fit-content;
+    position: relative;
+}
+#steps .title svg {
+    position: absolute;
+    right: -80px;
+    bottom: 0px;
 }
 
 .steps-list {
@@ -310,8 +326,15 @@ header nav {
 /* TESTIMONIAL */
 
 #testimonial .title {
-    text-align: center;
-    margin: 1vw 0;
+    position: relative;
+    width: fit-content;
+    margin: 10vw auto 1vw;
+}
+
+#testimonial .title svg {
+    position: absolute;
+    right: 135px;
+    top: -100px;
 }
 
 #testimonial-grid {
@@ -450,6 +473,12 @@ header nav {
     margin: 0px auto 40px;
 }
 
+.portfolio-title svg {
+    position: absolute;
+    right: -80px;
+    top: -40px;
+}
+
 .realisation {
     display: flex;
     margin-bottom: 50px;
@@ -486,7 +515,23 @@ header nav {
 #contact .title {
     color: var(--white);
     position: relative;
+    width: fit-content;
+    margin: 0px auto;
+    text-align: center;
 }
+
+#contact .title #Groupe_30 {
+    position: absolute;
+    left: 10px;
+    bottom: -15px;
+}
+
+#contact .title #Groupe_100 {
+    position: absolute;
+    right: -120px;
+    top: -15px;
+}
+
 
 .contact-form {
     width: 70%;
@@ -642,5 +687,9 @@ footer section {
         display: flex;
         flex-direction: column;
         gap: 8vw;
+    }
+
+    svg {
+        display: none;
     }
 }

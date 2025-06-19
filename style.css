@@ -190,7 +190,15 @@ header nav {
 /* SERVICES */
 #services .title {
     text-align: center;
-    margin: 5vw 0;
+    margin: 5vw auto;
+    width: fit-content;
+    position: relative;
+}
+
+#services .title img {
+    position: absolute;
+    right: -115px;
+    top: -90px;
 }
 
 .card-list {
@@ -199,6 +207,13 @@ header nav {
     align-items: center;
     gap: 2vw;
     flex-wrap: wrap;
+}
+
+.card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* border-radius: 16px 16px 0 0; */
 }
 
 /* ABOUT ME */
@@ -214,10 +229,11 @@ header nav {
 #about-me .title {
     position: relative;
 }
-#about-me .title svg {
+#about-me .title img {
+    width: 5rem;
     position: absolute;
-    right: -50px;
-    top: -80px;
+    right: -20px;
+    top: -40px;
 }
 
 #about-me .text {
@@ -297,10 +313,10 @@ header nav {
     width: fit-content;
     position: relative;
 }
-#steps .title svg {
+#steps .title img {
     position: absolute;
-    right: -80px;
-    bottom: 0px;
+    right: -50px;
+    bottom: -30px;
 }
 
 .steps-list {
@@ -331,7 +347,8 @@ header nav {
     margin: 10vw auto 1vw;
 }
 
-#testimonial .title svg {
+#testimonial .title img {
+    width: 10rem;
     position: absolute;
     right: 135px;
     top: -100px;
@@ -384,10 +401,10 @@ header nav {
   }
   
   .testimonial-avatar {
-    width: 48px;
-    height: 48px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
-    object-fit: cover;
+    object-fit: contain;
   }
   
   .testimonial-info .author-name {
@@ -473,9 +490,9 @@ header nav {
     margin: 0px auto 40px;
 }
 
-.portfolio-title svg {
+.portfolio-title img {
     position: absolute;
-    right: -80px;
+    right: -100px;
     top: -40px;
 }
 
@@ -526,10 +543,10 @@ header nav {
     bottom: -15px;
 }
 
-#contact .title #Groupe_100 {
+#contact .title img:last-child {
     position: absolute;
     right: -120px;
-    top: -15px;
+    top: -35px;
 }
 
 
@@ -691,6 +708,10 @@ footer section {
     }
 
     svg {
+        display: none;
+    }
+
+    .title img {
         display: none;
     }
 }

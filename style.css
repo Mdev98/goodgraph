@@ -595,6 +595,8 @@ header nav {
     margin: 40px auto 10px;
     font-size: 1.5rem;
     font-weight: bold;
+    border: none;
+    outline: none;;
 }
 
 .finally {
@@ -713,5 +715,13 @@ footer section {
 
     .title img {
         display: none;
+    }
+
+    .form-input {
+        width: 100%;
+    }
+
+    .form-input:first-child {
+        margin-right: 0;
     }
 }

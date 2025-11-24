@@ -1,13 +1,9 @@
 # netlify.toml – à placer à la racine de ton projet
 
-# Active l’Asset Optimization de Netlify (minification HTML/CSS/JS + compression Brotli/Gzip)
+# Active l'Asset Optimization de Netlify (minification HTML/CSS/JS + compression Brotli/Gzip)
 [build]
   publish = "."               # ton site est à la racine (HTML pur)
   command = "echo 'Pas de build nécessaire'"  # rien à build
-
-[[plugins]]
-  package = "netlify-plugin-cache"
-  # optionnel, garde le cache entre builds si tu veux
 
 # Headers de sécurité + cache agressif sur les images
 [[headers]]

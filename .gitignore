@@ -44,9 +44,6 @@ pip-wheel-metadata/
 # Database files
 *.sqlite3
 
-# Generated images (produced by conversion scripts)
-**/*.webp
-
 # Node
 node_modules/
 

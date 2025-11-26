@@ -28,6 +28,12 @@ python tools/convert_pngs_to_webp.py --root public --sizes 480 800 1200 --qualit
 Autoriser l'upscale (générer une taille plus large que l'original — déconseillé):
 ```bash
 python tools/convert_pngs_to_webp.py --root public --sizes 1200 --allow-upscale
+
+# dry-run pour voir les changements sans écriture
+python tools/update_html_img_to_webp.py --root . --dry-run --verbose
+
+# appliquer les changements (avec backup .bak)
+python tools/update_html_img_to_webp.py --root . --backup --verbose
 ```
 
 Notes:

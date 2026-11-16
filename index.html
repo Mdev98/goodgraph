@@ -303,6 +303,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .msg{margin:0;padding:12px 14px;border-radius:12px;font-size:14px}
 .msg.ok{background:color-mix(in srgb,var(--green) 16%,var(--card));color:#2E3A18}
 .msg.err{background:var(--blush);color:var(--wine)}
+.input-err{border-color:var(--wine)!important;box-shadow:0 0 0 2px var(--blush)!important}
 .hp{position:absolute;left:-9999px}
 
 /* ---------- fiche projet plein écran ---------- */
@@ -723,17 +724,19 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
         s:["Bonjour Vanessa, moi c'est ",", de ",". Je cherche ",", à lancer ","."],
         ph:{prenom:"votre prénom",marque:"votre marque",besoin:"ce dont j'ai besoin",delai:"quand je veux"},
         sending:"Envoi…",sent:"Merci, votre demande est bien partie. Je vous réponds très vite.",
-        offline:"L'envoi n'est pas possible depuis cet aperçu. Écrivez-moi à thegoodgraph@gmail.com.",
-        failed:"L'envoi n'a pas abouti. Réessayez, ou écrivez-moi à thegoodgraph@gmail.com.",
-        missing:"Il manque votre prénom, votre e-mail ou votre accord en bas du formulaire."},
+        sentMail:"Merci ! Votre demande a été préparée dans votre messagerie pour l'envoyer à thegoodgraph@gmail.com.",
+        openMail:"Ouvrir mon application e-mail pour confirmer l'envoi",
+        failed:"L'envoi n'a pas abouti. Écrivez-moi directement à thegoodgraph@gmail.com.",
+        missing:"Veuillez renseigner votre prénom, votre e-mail et cocher la case d'accord ci-dessous."},
     en:{example:"Example",soon:"Price coming soon",buy:"Buy",unavailable:"Coming soon",noProduct:"No product in this category yet.",
         project:"Project",disciplines:"Disciplines",sector:"Sector",studio:"Studio",all:"All",seeAll:n => "See all " + n + " projects",enlarge:"Enlarge image ",
         s:["Hi Vanessa, I'm ",", from ",". I'm looking for ",", to launch ","."],
         ph:{prenom:"your name",marque:"your brand",besoin:"what I need",delai:"whenever suits me"},
         sending:"Sending…",sent:"Thank you, your request has been sent. I'll get back to you soon.",
-        offline:"Sending isn't possible from this preview. Email me at thegoodgraph@gmail.com.",
-        failed:"Your request didn't go through. Try again, or email me at thegoodgraph@gmail.com.",
-        missing:"Your first name, email or consent at the bottom of the form is missing."}
+        sentMail:"Thank you! Your request is ready in your email app to be sent to thegoodgraph@gmail.com.",
+        openMail:"Open my email app to send",
+        failed:"Could not send. Please email me directly at thegoodgraph@gmail.com.",
+        missing:"Please provide your first name, your email and check the consent box below."}
   };
   let lang = "fr";
   try { if (localStorage.getItem("tgg-lang") === "en") lang = "en"; } catch(e){}
@@ -916,14 +919,14 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 
   /* ---------- formulaire de contact ---------- */
   const form = document.getElementById("form"), msg = document.getElementById("form-msg");
-  const chipText = input => input.nextElementSibling.textContent.toLowerCase();
+  const chipText = input => (input && input.nextElementSibling) ? input.nextElementSibling.textContent.trim().toLowerCase() : "";
   function sentence(){
     const s = T[lang].s, ph = T[lang].ph;
     const delai = form.querySelector('input[name="delai"]:checked');
     const parts = [
       ["prenom", form.prenom.value.trim()],
       ["marque", form.marque.value.trim()],
-      ["besoin", [...form.querySelectorAll('input[name="besoin"]:checked')].map(chipText).join(", ")],
+      ["besoin", [...form.querySelectorAll('input[name="besoin"]:checked')].map(chipText).filter(Boolean).join(", ")],
       ["delai", delai ? chipText(delai) : ""]
     ];
     const out = document.getElementById("sentence"); out.textContent = "";
@@ -935,18 +938,76 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
   }
   form.addEventListener("input", sentence);
   form.addEventListener("change", sentence);
+
+  form.querySelectorAll("input, textarea").forEach(el => {
+    el.addEventListener("input", () => el.classList.remove("input-err"));
+    el.addEventListener("change", () => el.classList.remove("input-err"));
+  });
+
   form.addEventListener("submit", async e => {
     e.preventDefault();
-    const show = (t, ok) => { msg.textContent = t; msg.className = "msg " + (ok ? "ok" : "err"); msg.hidden = false; };
-    if (!form.checkValidity()){ show(T[lang].missing, false); return; }
+    const show = (html, ok) => {
+      msg.innerHTML = html;
+      msg.className = "msg " + (ok ? "ok" : "err");
+      msg.hidden = false;
+    };
+
+    // Validation ciblée avec mise en évidence visuelle des erreurs
+    let hasErr = false;
+    const prenomVal = form.prenom.value.trim();
+    const emailVal = form.email.value.trim();
+    const consent = document.getElementById("consent");
+
+    if (!prenomVal){ form.prenom.classList.add("input-err"); hasErr = true; }
+    if (!emailVal || !form.email.checkValidity()){ form.email.classList.add("input-err"); hasErr = true; }
+    if (consent && !consent.checked){ consent.classList.add("input-err"); hasErr = true; }
+
+    if (hasErr){
+      show(T[lang].missing, false);
+      return;
+    }
+
     const btn = document.getElementById("send"), label = btn.innerHTML;
     btn.disabled = true; btn.textContent = T[lang].sending;
-    try {
-      const body = new URLSearchParams(new FormData(form)).toString();
-      const r = await fetch("/", {method:"POST", headers:{"Content-Type":"application/x-www-form-urlencoded"}, body});
-      if (r.ok){ form.reset(); sentence(); show(T[lang].sent, true); }
-      else show(r.status === 404 || r.status === 405 ? T[lang].offline : T[lang].failed, false);
-    } catch(err){ show(T[lang].offline, false); }
+
+    const marqueVal = form.marque.value.trim();
+    const messageVal = form.message.value.trim();
+    const delaiChecked = form.querySelector('input[name="delai"]:checked');
+    const delaiVal = delaiChecked ? chipText(delaiChecked) : "";
+    const besoinsVal = [...form.querySelectorAll('input[name="besoin"]:checked')].map(chipText).filter(Boolean).join(", ");
+    const recap = document.getElementById("sentence").textContent;
+
+    const mailSubject = encodeURIComponent(`Demande de projet — ${prenomVal}${marqueVal ? ' (' + marqueVal + ')' : ''}`);
+    const mailBody = encodeURIComponent(
+      `Bonjour Vanessa,\n\n${recap}\n\n` +
+      `Prénom : ${prenomVal}\n` +
+      `Marque : ${marqueVal || 'Non renseigné'}\n` +
+      `Email : ${emailVal}\n` +
+      `Besoins : ${besoinsVal || 'Non spécifié'}\n` +
+      `Délai : ${delaiVal || 'Non spécifié'}\n\n` +
+      (messageVal ? `Message complémentaire :\n${messageVal}\n` : '')
+    );
+    const mailtoUrl = `mailto:thegoodgraph@gmail.com?subject=${mailSubject}&body=${mailBody}`;
+
+    const isStatic = window.location.hostname.endsWith("github.io") || window.location.protocol === "file:";
+
+    if (!isStatic){
+      try {
+        const body = new URLSearchParams(new FormData(form)).toString();
+        const r = await fetch(window.location.pathname || "/", {method:"POST", headers:{"Content-Type":"application/x-www-form-urlencoded"}, body});
+        if (r.ok){
+          form.reset(); sentence(); show(T[lang].sent, true);
+          btn.disabled = false; btn.innerHTML = label;
+          return;
+        }
+      } catch(err){}
+    }
+
+    // Hébergement statique (GitHub Pages) ou repli direct par mailto
+    form.reset();
+    sentence();
+    window.location.href = mailtoUrl;
+    show(`${T[lang].sentMail}<br><a href="${mailtoUrl}" style="display:inline-block;margin-top:8px;font-weight:700;text-decoration:underline;color:inherit">${T[lang].openMail} ↗</a>`, true);
     btn.disabled = false; btn.innerHTML = label;
   });
 

@@ -1,51 +1,5 @@
-# Local trash folder (keep)
-trash
-
-# macOS
+public/
+*.zip
+logs/
 .DS_Store
 
-# Old build/artifacts folder
-old
-
-# Python
-__pycache__/
-*.py[cod]
-*.pyo
-
-# Virtual environments
-.venv/
-venv/
-env/
-
-# Environment variables
-.env
-env.local
-
-# IDEs and editors
-.vscode/
-.idea/
-
-# Backup files
-*.bak
-*~
-
-# Logs
-*.log
-
-# Byte-compiled / distribution
-build/
-dist/
-pip-wheel-metadata/
-*.egg-info/
-
-# Testing
-.pytest_cache/
-
-# Database files
-*.sqlite3
-
-# Node
-node_modules/
-
-# Coverage
-coverage/

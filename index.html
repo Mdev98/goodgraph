@@ -168,24 +168,53 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .case-feature .btn{justify-self:start}
 .case-feature .q{margin:0;padding-left:16px;border-left:2px solid var(--pink);font:400 clamp(20px,2.2vw,28px)/1.25 var(--serif);color:var(--ink)}
 
-/* ---------- témoignages : carrousel ---------- */
-.car{overflow:hidden;border-radius:var(--r);touch-action:pan-y;user-select:none;max-width:760px;width:100%}
-.car-track{display:flex;transition:transform .7s var(--ease);will-change:transform}
-.quote{position:relative;margin:0;flex:0 0 100%;min-width:0;background:var(--card);border-radius:var(--r);padding:clamp(24px,3.4vw,40px);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:clamp(20px,3vw,36px);align-items:center}
-.quote blockquote{margin:0;font:400 clamp(20px,2.4vw,30px)/1.2 var(--serif);color:var(--wine);text-wrap:balance}
-.quote cite{font-style:normal;display:grid;gap:4px;margin-top:clamp(20px,3vw,32px)}
-.quote cite b{font:700 17px/1.2 var(--display)}
-.quote cite small{font-size:14px;color:var(--ink-soft)}
-.quote .avatar{width:clamp(96px,11vw,140px);aspect-ratio:3/4;border-radius:999px 999px 14px 14px;display:grid;place-items:center;color:var(--card);font:700 clamp(32px,4vw,48px)/1 var(--display);overflow:hidden}
-.quote .avatar img{width:100%;height:100%;object-fit:cover}
-.quote .ex{position:absolute;top:16px;right:16px;background:var(--ink);color:var(--card);border-radius:999px;padding:6px 10px;font:700 10.5px/1 var(--body);letter-spacing:.08em;text-transform:uppercase}
-@media (max-width:640px){.quote{grid-template-columns:minmax(0,1fr);padding:52px 22px 24px;gap:18px}.quote blockquote{font-size:21px}.quote cite{margin-top:14px}.quote .avatar{width:84px;order:-1}.quote .ex{top:12px;right:12px}}
-.car-ctrl{display:flex;gap:8px}
-.car-ctrl button{width:44px;height:44px;border-radius:999px;border:1.5px solid var(--ink);background:transparent;color:var(--ink);font:600 16px/1 var(--body);transition:background .2s,color .2s}
-.car-ctrl button:hover{background:var(--ink);color:var(--card)}
-.car-dots{display:flex;gap:8px;justify-content:center;margin-top:18px}
-.car-dots button{width:10px;height:10px;border-radius:999px;border:0;padding:0;background:var(--line);transition:width .35s var(--ease),background .25s}
-.car-dots button[aria-current="true"]{width:28px;background:var(--wine)}
+/* ---------- témoignages : panneau clair, trois cartes, celle du centre en olive ---------- */
+.temo{background:color-mix(in srgb,var(--blush) 32%,var(--card));border-radius:var(--r);padding:clamp(36px,5vw,64px) clamp(16px,3vw,40px) clamp(28px,4vw,44px);text-align:center;position:relative;overflow:hidden;display:grid;gap:clamp(18px,3vw,30px);justify-items:center}
+/* deux arches en filet, rappel du motif du site */
+.temo::before,.temo::after{content:"";position:absolute;top:16%;width:clamp(110px,13vw,190px);aspect-ratio:3/4;border:2px solid color-mix(in srgb,var(--wine) 10%,transparent);border-radius:999px 999px 14px 14px;pointer-events:none}
+.temo::before{right:9%}
+.temo::after{right:calc(9% + clamp(70px,8vw,120px))}
+.temo-head{display:grid;gap:12px;justify-items:center;max-width:58ch;position:relative;z-index:1}
+.temo-head .pill{justify-self:center}
+.temo h2{font:700 clamp(30px,4vw,50px)/1.02 var(--display);letter-spacing:-.035em;margin:0;color:var(--ink)}
+.temo h2 em.serif{display:block;color:var(--green);font-size:1.06em;letter-spacing:-.02em}
+.temo-head p{margin:0;color:var(--ink-soft);font-size:15px}
+.t-stage{display:grid;width:100%;max-width:1060px;position:relative;z-index:1;padding-block:18px 14px;touch-action:pan-y;user-select:none}
+.tcard{grid-area:1 / 1;justify-self:center;width:min(32%,330px);margin:0;background:var(--card);border-radius:18px;padding:22px 22px 18px;text-align:left;display:flex;flex-direction:column;gap:12px;position:relative;box-shadow:0 14px 34px rgba(43,15,24,.07);
+  transform:translateX(calc(var(--off) * (100% + 24px))) scale(.94);opacity:0;pointer-events:none;cursor:pointer;
+  transition:transform .7s var(--ease),opacity .5s ease,background-color .5s ease,color .5s ease,box-shadow .5s ease}
+.tcard.is-side{opacity:1;pointer-events:auto}
+.tcard.is-side:hover{transform:translateX(calc(var(--off) * (100% + 24px))) scale(.96)}
+.tcard.is-active{opacity:1;pointer-events:auto;cursor:default;z-index:2;transform:translateX(0) translateY(-10px) scale(1);background-color:var(--green);background-image:linear-gradient(160deg,var(--green),#3D4D20);color:var(--card);box-shadow:0 24px 46px rgba(85,107,47,.32)}
+.tcard .stars{color:var(--green);font-size:12px;letter-spacing:3px}
+.tcard.is-active .stars{color:var(--blush)}
+.tcard .qmark{position:absolute;top:8px;right:18px;font:400 64px/1 var(--serif);color:color-mix(in srgb,var(--card) 30%,transparent);opacity:0;transition:opacity .5s}
+.tcard.is-active .qmark{opacity:1}
+.tcard blockquote{margin:0;font:italic 400 14.5px/1.6 var(--body);color:var(--ink-soft)}
+.tcard.is-active blockquote{color:var(--card)}
+.tcard .who{display:flex;align-items:center;gap:10px;margin-top:auto;padding-top:14px;border-top:1px solid var(--line)}
+.tcard.is-active .who{border-top-color:color-mix(in srgb,var(--card) 25%,transparent)}
+.tcard .av{width:34px;height:34px;border-radius:50%;flex:none;display:grid;place-items:center;color:var(--card);font:700 12px/1 var(--display);overflow:hidden;box-shadow:0 0 0 2px var(--card)}
+.tcard .av img{width:100%;height:100%;object-fit:cover}
+.tcard .who b{display:block;font:700 13.5px/1.2 var(--display)}
+.tcard .who small{display:block;font-size:12px;color:var(--green)}
+.tcard.is-active .who small{color:var(--blush)}
+.tcard .ex{position:absolute;top:-9px;right:16px;background:var(--ink);color:var(--card);border-radius:999px;padding:5px 9px;font:700 10px/1 var(--body);letter-spacing:.08em;text-transform:uppercase}
+@media (max-width:760px){
+  .tcard{width:78%;transform:translateX(calc(var(--off) * (100% + 12px))) scale(.94)}
+  .tcard.is-side:hover{transform:translateX(calc(var(--off) * (100% + 12px))) scale(.94)}
+  .temo::before,.temo::after{display:none}
+}
+.temo-foot{display:grid;gap:12px;justify-items:center;position:relative;z-index:1}
+.t-nav{display:flex;align-items:center;gap:14px}
+.t-nav .arrow{width:40px;height:40px;border-radius:999px;border:1.5px solid var(--ink);background:transparent;color:var(--ink);font:600 15px/1 var(--body);transition:background .2s,color .2s}
+.t-nav .arrow:hover{background:var(--ink);color:var(--card)}
+.car-dots{display:flex;gap:8px}
+.car-dots button{width:9px;height:9px;border-radius:999px;border:0;padding:0;background:color-mix(in srgb,var(--ink) 18%,transparent);transition:width .35s var(--ease),background .25s}
+.car-dots button[aria-current="true"]{width:26px;background:var(--green)}
+.temo-line{margin:4px 0 0;font:400 clamp(16px,1.6vw,19px)/1.3 var(--serif);color:var(--ink-soft)}
+.temo-link{font:700 13.5px/1 var(--body);text-decoration:none;color:var(--ink)}
+.temo-link:hover{color:var(--wine)}
 
 /* ---------- à propos ---------- */
 .bento{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--gap)}
@@ -505,14 +534,19 @@ p.empty,.shop-grid .empty{grid-column:1 / -1;background:var(--card);border-radiu
     </section>
 
     <section class="sec" id="temoignages" aria-labelledby="temo-title">
-      <div class="sec-head">
-        <div class="stack"><span class="pill" data-en="Testimonials">Témoignages</span><h2 class="h2" id="temo-title"><span data-en="What clients say">Ce que disent mes clients</span></h2></div>
-        <div class="car-ctrl"><button type="button" id="t-prev">←</button><button type="button" id="t-next">→</button></div>
+      <div class="temo">
+        <div class="temo-head">
+          <span class="pill" data-en="Testimonials">Témoignages</span>
+          <h2 id="temo-title" data-en-html="What my &lt;em class=&quot;serif&quot;&gt;clients say.&lt;/em&gt;">Ce que disent <em class="serif">mes clients.</em></h2>
+          <p data-en="Brands supported from strategic thinking to the last detail.">Des marques accompagnées de la réflexion stratégique jusqu'au dernier détail.</p>
+        </div>
+        <div class="t-stage" id="t-stage" aria-roledescription="carrousel"></div>
+        <div class="temo-foot">
+          <div class="t-nav"><button type="button" class="arrow" id="t-prev">←</button><div class="car-dots" id="car-dots"></div><button type="button" class="arrow" id="t-next">→</button></div>
+          <p class="temo-line" data-en="“I bring your vision to life.”">« Je donne vie à votre vision. »</p>
+          <a class="temo-link" href="#contact"><span data-en="Start a project">Démarrer un projet</span> →</a>
+        </div>
       </div>
-      <div class="car" id="car" aria-roledescription="carrousel">
-        <div class="car-track" id="car-track"></div>
-      </div>
-      <div class="car-dots" id="car-dots"></div>
     </section>
 
     <section class="sec" id="apropos" aria-labelledby="about-title">
@@ -836,22 +870,29 @@ p.empty,.shop-grid .empty{grid-column:1 / -1;background:var(--card);border-radiu
   let tIndex = 0, tTimer = null, tStartX = null;
   const reduceMotion = matchMedia("(prefers-reduced-motion:reduce)").matches;
 
-  /* ---------- témoignages : carrousel ---------- */
+  /* ---------- témoignages : carrousel ----------
+     Toutes les cartes sont empilées dans la même case de grille ; --off (écart à la carte active,
+     en boucle) les place à gauche (-1), au centre (0) ou à droite (1). Les autres restent cachées. */
+  const stage = document.getElementById("t-stage");
   function renderTesti(){
-    const track = document.getElementById("car-track"), dots = document.getElementById("car-dots");
-    track.textContent = ""; dots.textContent = "";
+    const dots = document.getElementById("car-dots");
+    stage.textContent = ""; dots.textContent = "";
     TESTIMONIALS.forEach((t, i) => {
-      const q = el("figure","quote");
-      q.setAttribute("role","group"); q.setAttribute("aria-roledescription", lang === "fr" ? "diapositive" : "slide");
-      q.setAttribute("aria-label", (i+1) + " / " + TESTIMONIALS.length);
-      if (t.placeholder) q.appendChild(el("span","ex", lang === "fr" ? "Exemple" : "Example"));
-      const txt = el("div"), bq = el("blockquote",null,"« " + t.quote[lang] + " »");
-      const cite = el("cite"); cite.append(el("b",null,t.name), el("small",null,t.role[lang]));
-      txt.append(bq, cite);
-      const av = el("div","avatar"); av.style.background = t.color;
-      if (t.photo){ const im = el("img"); im.src = "img/" + t.photo; im.alt = t.name; av.appendChild(im); }
+      const c = el("figure","tcard");
+      c.setAttribute("role","group"); c.setAttribute("aria-roledescription", lang === "fr" ? "témoignage" : "testimonial");
+      c.setAttribute("aria-label", (i+1) + " / " + TESTIMONIALS.length);
+      if (t.placeholder) c.appendChild(el("span","ex", lang === "fr" ? "Exemple" : "Example"));
+      const stars = el("div","stars","★★★★★"), qm = el("span","qmark","“");
+      stars.setAttribute("aria-hidden","true"); qm.setAttribute("aria-hidden","true");
+      const who = el("figcaption","who"), av = el("span","av"), id = el("span");
+      av.style.background = t.color;
+      if (t.photo){ const im = el("img"); im.src = "img/" + t.photo; im.alt = ""; av.appendChild(im); }
       else av.textContent = t.initials;
-      q.append(txt, av); track.appendChild(q);
+      id.append(el("b",null,t.name), el("small",null,t.role[lang]));
+      who.append(av, id);
+      c.append(stars, qm, el("blockquote",null,"« " + t.quote[lang] + " »"), who);
+      c.addEventListener("click", () => { if (i !== tIndex) goTesti(i); });
+      stage.appendChild(c);
       const d = el("button"); d.type = "button";
       d.setAttribute("aria-label", (lang === "fr" ? "Témoignage " : "Testimonial ") + (i+1));
       d.addEventListener("click", () => goTesti(i));
@@ -863,15 +904,22 @@ p.empty,.shop-grid .empty{grid-column:1 / -1;background:var(--card);border-radiu
     tAuto();
   }
   function goTesti(i, animate = true){
-    const n = TESTIMONIALS.length, track = document.getElementById("car-track");
+    const n = TESTIMONIALS.length, cards = [...stage.children];
     tIndex = (i + n) % n;
-    if (!animate) track.style.transition = "none";
-    track.style.transform = "translateX(-" + (tIndex * 100) + "%)";
-    if (!animate){ void track.offsetWidth; track.style.transition = ""; }
+    cards.forEach((c, k) => {
+      let off = k - tIndex;
+      if (off > n / 2) off -= n;
+      if (off < -n / 2) off += n;
+      if (!animate) c.style.transition = "none";
+      c.style.setProperty("--off", off);
+      c.classList.toggle("is-active", off === 0);
+      c.classList.toggle("is-side", Math.abs(off) === 1);
+      c.setAttribute("aria-hidden", String(off !== 0));
+    });
+    if (!animate){ void stage.offsetWidth; cards.forEach(c => c.style.transition = ""); }
     [...document.getElementById("car-dots").children].forEach((d, k) => {
       if (k === tIndex) d.setAttribute("aria-current","true"); else d.removeAttribute("aria-current");
     });
-    [...track.children].forEach((q, k) => q.setAttribute("aria-hidden", String(k !== tIndex)));
   }
   function tAuto(){
     clearInterval(tTimer);
@@ -879,13 +927,13 @@ p.empty,.shop-grid .empty{grid-column:1 / -1;background:var(--card);border-radiu
   }
   document.getElementById("t-prev").addEventListener("click", () => goTesti(tIndex - 1));
   document.getElementById("t-next").addEventListener("click", () => goTesti(tIndex + 1));
-  const car = document.getElementById("car");
-  car.addEventListener("mouseenter", () => clearInterval(tTimer));
-  car.addEventListener("mouseleave", tAuto);
-  car.addEventListener("focusin", () => clearInterval(tTimer));
-  car.addEventListener("focusout", tAuto);
-  car.addEventListener("pointerdown", e => { tStartX = e.clientX; });
-  car.addEventListener("pointerup", e => {
+  const temo = document.querySelector(".temo");
+  temo.addEventListener("mouseenter", () => clearInterval(tTimer));
+  temo.addEventListener("mouseleave", tAuto);
+  temo.addEventListener("focusin", () => clearInterval(tTimer));
+  temo.addEventListener("focusout", tAuto);
+  stage.addEventListener("pointerdown", e => { tStartX = e.clientX; });
+  stage.addEventListener("pointerup", e => {
     if (tStartX === null) return;
     const dx = e.clientX - tStartX; tStartX = null;
     if (Math.abs(dx) > 40) goTesti(tIndex + (dx < 0 ? 1 : -1));

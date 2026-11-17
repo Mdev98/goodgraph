@@ -989,7 +989,7 @@ p.empty,.shop-grid .empty{grid-column:1 / -1;background:var(--card);border-radiu
     );
     const mailtoUrl = `mailto:thegoodgraph@gmail.com?subject=${mailSubject}&body=${mailBody}`;
 
-    const isStatic = window.location.hostname.endsWith("github.io") || window.location.protocol === "file:";
+    const isStatic = window.location.hostname.endsWith("github.io") || window.location.hostname.endsWith("vercel.app") || window.location.hostname.endsWith("thegoodgraph.design") || window.location.protocol === "file:";
 
     if (!isStatic){
       try {
@@ -1003,11 +1003,12 @@ p.empty,.shop-grid .empty{grid-column:1 / -1;background:var(--card);border-radiu
       } catch(err){}
     }
 
-    // Hébergement statique (GitHub Pages) ou repli direct par mailto
-    form.reset();
-    sentence();
+    // Hébergement statique (Vercel) : on ouvre la messagerie sans vider le formulaire,
+    // pour que rien ne soit perdu si l'application email ne s'ouvre pas.
     window.location.href = mailtoUrl;
-    show(`${T[lang].sentMail}<br><a href="${mailtoUrl}" style="display:inline-block;margin-top:8px;font-weight:700;text-decoration:underline;color:inherit">${T[lang].openMail} ↗</a>`, true);
+    show(`${T[lang].sentMail}<br><a id="mail-open" href="${mailtoUrl}" style="display:inline-block;margin-top:8px;font-weight:700;text-decoration:underline;color:inherit">${T[lang].openMail} ↗</a>`, true);
+    // Le formulaire ne se vide qu'après un clic sur le lien : le visiteur a bien lancé l'envoi.
+    document.getElementById("mail-open").addEventListener("click", () => { form.reset(); sentence(); });
     btn.disabled = false; btn.innerHTML = label;
   });
 

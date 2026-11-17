@@ -1,7 +1,7 @@
 # The Good Graph — site de Vanessa Santos
 
 Site vitrine et boutique de **The Good Graph** (Vanessa Santos, stratégie de marque et direction créative, Dakar).
-HTML, CSS et JavaScript sans framework ni dépendance npm. Hébergement prévu sur **Netlify**.
+HTML, CSS et JavaScript sans framework ni dépendance npm. Hébergement sur **Vercel**.
 
 ## Démarrer
 
@@ -10,12 +10,12 @@ sh build.sh                                        # assemble le site dans publi
 python3 -m http.server 8000 --directory public     # puis ouvrir http://localhost:8000
 ```
 
-`public/` est déjà généré dans ce livrable : on peut le déposer tel quel sur Netlify (glisser-déposer sur app.netlify.com/drop).
+Le site est publié sur **Vercel** : `index.html` est à la racine et se met en ligne tel quel, sans build.
 
 ## Arborescence
 
 ```
-src/index.html        la page entière : styles, contenu FR/EN, script
+index.html            la page entière : styles, contenu FR/EN, script
 img/                  images optimisées pour le web (servies par le site)
 build.sh              ajoute l'en-tête HTML complet et copie img/ dans public/
 netlify.toml          build : sh build.sh — dossier publié : public/
@@ -54,10 +54,9 @@ Tout le contenu dynamique est dans le script en bas de `src/index.html` :
 ### Traduction FR / EN
 Le français est dans le HTML. L'anglais est dans les attributs `data-en` (texte simple) ou `data-en-html` (texte avec balises, échappées). Le choix de langue est mémorisé dans `localStorage` (`tgg-lang`).
 
-### Formulaire de contact — Netlify Forms
-Le formulaire `name="contact"` porte `data-netlify="true"`, avec un champ piège anti-spam `bot-field`. L'envoi se fait en AJAX (POST vers `/`).
-Après le premier déploiement : Netlify → Forms → activer la détection des formulaires si besoin, puis ajouter une **notification email vers thegoodgraph@gmail.com**.
-**L'envoi n'a pas encore été testé en production.** À vérifier dès la mise en ligne.
+### Formulaire de contact — sans serveur
+Le formulaire `name="contact"` contient un champ piège anti-spam `bot-field`. Sur Vercel, il ouvre la messagerie du visiteur avec le message prêt (voir ci-dessous).
+Sur Vercel, l'envoi ouvre la messagerie du visiteur avec le message déjà rédigé vers thegoodgraph@gmail.com. Le formulaire ne se vide qu'après un clic sur le lien d'envoi, pour ne rien perdre si la messagerie ne s'ouvre pas.
 
 ### Boutique — Chariow
 Le paiement et la livraison des fichiers se font sur **Chariow** (Wave et Orange Money confirmés par Vanessa). Le site n'encaisse rien : le bouton « Acheter » ouvre la page du produit sur Chariow.
@@ -88,9 +87,9 @@ Les logos d'origine sont dans `assets-sources/logos/`. Vanessa conserve les phot
 - Focus clavier visible, visionneuse d'images au clavier (Échap, flèches), mise en page testée à 390 px et 1 440 px de large.
 
 ## Reste à faire
-1. **Nom de domaine** : à acheter (ex. thegoodgraph.com ou .sn), puis à brancher dans Netlify.
+1. **Nom de domaine** : thegoodgraph.design est branché sur Vercel. Vérifier que le domaine pointe bien sur le projet Vercel.
 2. **Open Graph** : `og:image` (dans `build.sh`) est en chemin relatif. Les réseaux sociaux exigent une URL absolue : la mettre à jour une fois le domaine connu, et ajouter `og:url`.
 3. **Boutique** : remplacer les produits d'exemple par les vrais (nom, description, format, prix, visuel, lien Chariow).
-4. **Formulaire** : tester un envoi réel sur Netlify et activer la notification email.
+4. **Formulaire** : tester l'envoi depuis un vrai téléphone et un vrai ordinateur (la messagerie doit s'ouvrir avec le message prêt).
 5. **Contenus en attente** : avis clients, fourchettes de budget pour le formulaire, années et clients des projets.
 6. **Mentions légales et politique de confidentialité** : à prévoir (le formulaire collecte nom et email).

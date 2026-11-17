@@ -168,6 +168,25 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .case-feature .btn{justify-self:start}
 .case-feature .q{margin:0;padding-left:16px;border-left:2px solid var(--pink);font:400 clamp(20px,2.2vw,28px)/1.25 var(--serif);color:var(--ink)}
 
+/* ---------- témoignages : carrousel ---------- */
+.car{overflow:hidden;border-radius:var(--r);touch-action:pan-y;user-select:none}
+.car-track{display:flex;transition:transform .7s var(--ease);will-change:transform}
+.quote{position:relative;margin:0;flex:0 0 100%;min-width:0;background:var(--card);border-radius:var(--r);padding:clamp(28px,5vw,64px);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:clamp(24px,4vw,56px);align-items:center}
+.quote blockquote{margin:0;font:400 clamp(24px,3.2vw,42px)/1.18 var(--serif);color:var(--wine);text-wrap:balance}
+.quote cite{font-style:normal;display:grid;gap:4px;margin-top:clamp(20px,3vw,32px)}
+.quote cite b{font:700 17px/1.2 var(--display)}
+.quote cite small{font-size:14px;color:var(--ink-soft)}
+.quote .avatar{width:clamp(120px,16vw,200px);aspect-ratio:3/4;border-radius:999px 999px 14px 14px;display:grid;place-items:center;color:var(--card);font:700 clamp(32px,4vw,48px)/1 var(--display);overflow:hidden}
+.quote .avatar img{width:100%;height:100%;object-fit:cover}
+.quote .ex{position:absolute;top:16px;right:16px;background:var(--ink);color:var(--card);border-radius:999px;padding:6px 10px;font:700 10.5px/1 var(--body);letter-spacing:.08em;text-transform:uppercase}
+@media (max-width:640px){.quote{grid-template-columns:minmax(0,1fr);padding-top:56px}.quote .avatar{width:96px;order:-1}}
+.car-ctrl{display:flex;gap:8px}
+.car-ctrl button{width:44px;height:44px;border-radius:999px;border:1.5px solid var(--ink);background:transparent;color:var(--ink);font:600 16px/1 var(--body);transition:background .2s,color .2s}
+.car-ctrl button:hover{background:var(--ink);color:var(--card)}
+.car-dots{display:flex;gap:8px;justify-content:center;margin-top:18px}
+.car-dots button{width:10px;height:10px;border-radius:999px;border:0;padding:0;background:var(--line);transition:width .35s var(--ease),background .25s}
+.car-dots button[aria-current="true"]{width:28px;background:var(--wine)}
+
 /* ---------- à propos ---------- */
 .bento{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--gap)}
 @media (max-width:720px){.bento{grid-template-columns:1fr}}
@@ -485,6 +504,17 @@ p.empty,.shop-grid .empty{grid-column:1 / -1;background:var(--card);border-radiu
       </a>
     </section>
 
+    <section class="sec" id="temoignages" aria-labelledby="temo-title">
+      <div class="sec-head">
+        <div class="stack"><span class="pill" data-en="Testimonials">Témoignages</span><h2 class="h2" id="temo-title"><span data-en="What clients say">Ce que disent mes clients</span></h2></div>
+        <div class="car-ctrl"><button type="button" id="t-prev">←</button><button type="button" id="t-next">→</button></div>
+      </div>
+      <div class="car" id="car" aria-roledescription="carrousel">
+        <div class="car-track" id="car-track"></div>
+      </div>
+      <div class="car-dots" id="car-dots"></div>
+    </section>
+
     <section class="sec" id="apropos" aria-labelledby="about-title">
       <div class="bento">
         <div class="card photo reveal"><img src="img/vanessa-portrait.jpg" alt="Portrait de Vanessa Santos" loading="lazy" width="1086" height="1448"></div>
@@ -785,6 +815,82 @@ p.empty,.shop-grid .empty{grid-column:1 / -1;background:var(--card);border-radiu
     PROJECTS.forEach(p => { const li = el("li"), a = el("a",null,p.title); a.href = "#" + p.id; li.appendChild(a); fp.appendChild(li); });
   }
 
+  /* Témoignages clients.
+     Les textes ci-dessous sont des EXEMPLES (placeholder:true) : badge « Exemple » affiché.
+     Pour publier un vrai témoignage : mettre placeholder:false, remplacer texte, nom, poste,
+     et ajouter photo:"fichier.jpg" dans img/ (sinon les initiales s'affichent sur la couleur). */
+  const TESTIMONIALS = [
+    { placeholder:true, initials:"AB", color:"#FF8AB5", photo:"",
+      quote:{fr:"Texte d'exemple à remplacer. Elle a compris notre marque dès la première réunion, et l'identité qu'elle nous a livrée nous ressemble vraiment.",
+             en:"Placeholder text to replace. She understood our brand from the first meeting, and the identity she delivered really feels like us."},
+      name:"Prénom Nom", role:{fr:"Fondatrice, marque exemple",en:"Founder, example brand"} },
+    { placeholder:true, initials:"CD", color:"#556B2F", photo:"",
+      quote:{fr:"Deuxième exemple de texte. Le packaging a changé la façon dont nos clients nous voient en boutique, et les ventes ont suivi.",
+             en:"Second placeholder text. The packaging changed how our customers see us in store, and sales followed."},
+      name:"Prénom Nom", role:{fr:"Directeur, marque exemple",en:"Director, example brand"} },
+    { placeholder:true, initials:"EF", color:"#8C2D44", photo:"",
+      quote:{fr:"Troisième exemple. Un accompagnement clair, des délais tenus et une vraie écoute de nos besoins, du début à la fin du projet.",
+             en:"Third placeholder. Clear guidance, deadlines kept and real listening to our needs, from start to finish."},
+      name:"Prénom Nom", role:{fr:"Responsable communication, marque exemple",en:"Communication lead, example brand"} }
+  ];
+  let tIndex = 0, tTimer = null, tStartX = null;
+  const reduceMotion = matchMedia("(prefers-reduced-motion:reduce)").matches;
+
+  /* ---------- témoignages : carrousel ---------- */
+  function renderTesti(){
+    const track = document.getElementById("car-track"), dots = document.getElementById("car-dots");
+    track.textContent = ""; dots.textContent = "";
+    TESTIMONIALS.forEach((t, i) => {
+      const q = el("figure","quote");
+      q.setAttribute("role","group"); q.setAttribute("aria-roledescription", lang === "fr" ? "diapositive" : "slide");
+      q.setAttribute("aria-label", (i+1) + " / " + TESTIMONIALS.length);
+      if (t.placeholder) q.appendChild(el("span","ex", lang === "fr" ? "Exemple" : "Example"));
+      const txt = el("div"), bq = el("blockquote",null,"« " + t.quote[lang] + " »");
+      const cite = el("cite"); cite.append(el("b",null,t.name), el("small",null,t.role[lang]));
+      txt.append(bq, cite);
+      const av = el("div","avatar"); av.style.background = t.color;
+      if (t.photo){ const im = el("img"); im.src = "img/" + t.photo; im.alt = t.name; av.appendChild(im); }
+      else av.textContent = t.initials;
+      q.append(txt, av); track.appendChild(q);
+      const d = el("button"); d.type = "button";
+      d.setAttribute("aria-label", (lang === "fr" ? "Témoignage " : "Testimonial ") + (i+1));
+      d.addEventListener("click", () => goTesti(i));
+      dots.appendChild(d);
+    });
+    document.getElementById("t-prev").setAttribute("aria-label", lang === "fr" ? "Témoignage précédent" : "Previous testimonial");
+    document.getElementById("t-next").setAttribute("aria-label", lang === "fr" ? "Témoignage suivant" : "Next testimonial");
+    goTesti(Math.min(tIndex, TESTIMONIALS.length - 1), false);
+    tAuto();
+  }
+  function goTesti(i, animate = true){
+    const n = TESTIMONIALS.length, track = document.getElementById("car-track");
+    tIndex = (i + n) % n;
+    if (!animate) track.style.transition = "none";
+    track.style.transform = "translateX(-" + (tIndex * 100) + "%)";
+    if (!animate){ void track.offsetWidth; track.style.transition = ""; }
+    [...document.getElementById("car-dots").children].forEach((d, k) => {
+      if (k === tIndex) d.setAttribute("aria-current","true"); else d.removeAttribute("aria-current");
+    });
+    [...track.children].forEach((q, k) => q.setAttribute("aria-hidden", String(k !== tIndex)));
+  }
+  function tAuto(){
+    clearInterval(tTimer);
+    if (!reduceMotion) tTimer = setInterval(() => goTesti(tIndex + 1), 6000);
+  }
+  document.getElementById("t-prev").addEventListener("click", () => goTesti(tIndex - 1));
+  document.getElementById("t-next").addEventListener("click", () => goTesti(tIndex + 1));
+  const car = document.getElementById("car");
+  car.addEventListener("mouseenter", () => clearInterval(tTimer));
+  car.addEventListener("mouseleave", tAuto);
+  car.addEventListener("focusin", () => clearInterval(tTimer));
+  car.addEventListener("focusout", tAuto);
+  car.addEventListener("pointerdown", e => { tStartX = e.clientX; });
+  car.addEventListener("pointerup", e => {
+    if (tStartX === null) return;
+    const dx = e.clientX - tStartX; tStartX = null;
+    if (Math.abs(dx) > 40) goTesti(tIndex + (dx < 0 ? 1 : -1));
+  });
+
   /* ---------- boutique ---------- */
   function productCard(pr){
     const art = el("article","product reveal");
@@ -1024,7 +1130,7 @@ p.empty,.shop-grid .empty{grid-column:1 / -1;background:var(--card);border-radiu
       n.innerHTML = lang === "en" ? n.dataset.enHtml : n.dataset.frHtml;
     });
     document.querySelectorAll(".lang button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.lang === lang)));
-    renderCards(); renderShop(); sentence();
+    renderCards(); renderShop(); renderTesti(); sentence();
     if (current >= 0) fillCase(current);
   }
   document.querySelectorAll(".lang button").forEach(b => b.addEventListener("click", () => {
